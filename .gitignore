@@ -1,2 +1,6 @@
 terraform.tfvars
 learnings.md
+cheat/
+terraform.tfstate
+terraform.tfstate.backup
+.terraform
