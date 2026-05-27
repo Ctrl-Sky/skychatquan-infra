@@ -2,6 +2,10 @@ provider "aws" {
     region = "${var.aws_region}"
 }
 
+provider "cloudflare" {
+    api_token = "${var.cloudflare_api_token}"
+}
+
 data "aws_ami" "ubuntu" {
     most_recent =  true
     owners = ["099720109477"] # This is the ID of Canonical (the people who own Ubuntu)
