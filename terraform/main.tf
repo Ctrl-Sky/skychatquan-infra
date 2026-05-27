@@ -16,6 +16,17 @@ data "aws_ami" "ubuntu" {
     }
 }
 
+# Register SSH public key with AWS
+# AWS places key on the EC2 Instance when it boots
+resource "aws_key_pair" "deploy" {
+    key_name = "${var.domain_name}-deploy-key"
+    public_key = file(var.ssh_public_key_path)
+  
+    tags = {
+        Name = "${var.domain_name}-deploy-key"
+    }
+}
+
 # Create the instance
 resource "aws_instance" "app_server" {
     ami = data.aws_ami.ubuntu.id
@@ -26,6 +37,9 @@ resource "aws_instance" "app_server" {
 
     # Attach security group
     vpc_security_group_ids = [aws_security_group.web.id]
+
+    # Tells EC2 instance to use this specific SSH key pair for login access.
+    key_name = aws_key_pair.deploy.key_name
 
     tags = {
         Name = "skychatquan" # Naming the instance
