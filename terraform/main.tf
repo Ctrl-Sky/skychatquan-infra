@@ -1,5 +1,5 @@
 provider "aws" {
-    region = "us-east-2"
+    region = "${var.aws_region}"
 }
 
 data "aws_ami" "ubuntu" {
@@ -15,7 +15,7 @@ data "aws_ami" "ubuntu" {
 # Create the instance
 resource "aws_instance" "app_server" {
     ami = data.aws_ami.ubuntu.id
-    instance_type = "t3.micro"
+    instance_type = "${var.instance_type}"
 
     # Place instance in public subnet created in networking
     subnet_id = aws_subnet.public.id
