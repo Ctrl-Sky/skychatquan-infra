@@ -20,6 +20,9 @@ resource "aws_instance" "app_server" {
     # Place instance in public subnet created in networking
     subnet_id = aws_subnet.public.id
 
+    # Attach security group
+    vpc_security_group_ids = [aws_security_group.web.id]
+
     tags = {
         Name = "skychatquan" # Naming the instance
     }
