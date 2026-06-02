@@ -1,0 +1,29 @@
+---
+
+# sudo apt update && sudo apt upgrade -y
+- name: Update apt package
+  apt:
+    update_cache: yes
+    upgrade: yes
+    cache_valid_time: 86400
+
+# sudo apt install -y curl git ufw fail2ban unattended-upgrades
+- name: Install common packages
+  apt:
+    name:
+      - curl
+      - git
+      - ufw # Uncomplicated firewall
+      - unattended-upgrades 
+
+# sudo useradd -m -s /bin/bash deploy
+# sudo usermod -aG sudo deploy
+
+- name: Create deploy user
+  user:
+    name: "{{ deploy_user }}"
+    shell: /bin/bash
+    create_home: yes
+    groups: sudo
+    append: yes
+    state: present # Create user if they do not exist

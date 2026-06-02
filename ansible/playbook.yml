@@ -1,0 +1,7 @@
+---
+- name: Configure Web server
+  hosts: webservers # Run taks in this playbook in servers listed under webservers in inventory.ini
+  become: true # Run all task as sudo
+
+  roles:
+    - common
