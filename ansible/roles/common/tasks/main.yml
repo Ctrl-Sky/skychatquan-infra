@@ -7,18 +7,18 @@
     upgrade: yes
     cache_valid_time: 86400
 
-# sudo apt install -y curl git ufw fail2ban unattended-upgrades
+# sudo apt install -y curl git
 - name: Install common packages
   apt:
     name:
       - curl
       - git
-      - ufw # Uncomplicated firewall
-      - unattended-upgrades 
 
 # sudo useradd -m -s /bin/bash deploy
+# -m flag creates home directory for user /home/deploy/
+# -s flag puts ot to /bin/bash
 # sudo usermod -aG sudo deploy
-
+# -aG appends it to sudo group instead of completely rewriting
 - name: Create deploy user
   user:
     name: "{{ deploy_user }}"
@@ -27,3 +27,28 @@
     groups: sudo
     append: yes
     state: present # Create user if they do not exist
+
+# sudo mkdir -p /home/deploy/.ssh
+# sudo chmod 700 /home/deploy/.ssh
+# chmod 700 grants read,write,execute to owner and removes all from others
+# echo "ssh key content" | sudo tee /home/johnsmith/.ssh/authorized_keys
+# This writes the public key to authorized_key, an important file that contains list of public keys that are authorized to log in to the server
+# sudo chmod 600 /home/deploy/.ssh/authorized_keys
+# sudo chown -R deploy:deploy /home/deploy/.ssh
+# chmod 600 grands read,write, to ownder and removes all from others
+# This adds the public to the deploy user so then we can SSH as the deploy user isntead of as ubuntu. When you run ssh deploy@1.2.3.4 it first looks into /home/deploy/.ssh/authorized_keys and looks at the list of public keys and sees if your private key matches any of them. If it does, you are allowed in. Terraform already added our public key into authroized key for ubuntu user so we are doing that now for this user
+- name: Add SSH public key for deploy user
+  authorized_key:
+    user: "{{ deploy_user }}"
+    key: "{{ lookup('file', '~/.ssh/~/.ssh/deploy_key.pub') }}"
+    state: present
+  
+# sudo visudo -f /etc/sudoers.d/deploy
+# sudo -l -U deploy
+# Creates sudoer file and places the line johnsmith ALL=(ALL) NOPASSWD: ALL
+- name: Configure Sudo Access for Deploy user
+  lineinfile:
+    path: "/etc/sudoers.d/{{ deploy_user }}"
+    line: "{{ deploy_user }} ALL=(ALL) NOPASSWD: ALL"
+    create: yes
+    validate: 'visudo -cf %s'
