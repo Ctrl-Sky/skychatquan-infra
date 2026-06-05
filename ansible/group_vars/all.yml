@@ -1,1 +1,3 @@
+domain_name: "skychatquan.com"
 deploy_user: deploy
+website_root: /var/www/skychatquan.com

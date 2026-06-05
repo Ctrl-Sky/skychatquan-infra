@@ -1,0 +1,21 @@
+# This conf file is the first part of a two stage setup for Let's Encrypt and setting up HTTPS in nginx
+# Once the SSL certs are recieved, this file is replaced by nginx_site_ssl.conf.j2 within nginx
+
+# For HTTP
+server {
+    listen 80;
+    listen [::]:80; # For IPv6
+
+    # Which domain names server this block applies to. This becomes the value for $host
+    server_name {{ domain_name }} www.{{ domain_name }}; 
+
+    # Let's Encrypt verifys domain ownership over HTTP
+    # For any requests to /.well-known/acme-challenge/ then serve files from /var/www/certbot
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}

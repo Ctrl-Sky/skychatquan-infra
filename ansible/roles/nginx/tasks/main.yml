@@ -1,0 +1,63 @@
+---
+
+# sudo apt update
+# sudo apt install -y nginx
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+# sudo mkdir -p /var/www/skychatquan.com
+# sudo chown deploy:www-data /var/www/skychatquan.com
+# sudo chmod 755 /var/www/skychatquan.com
+# Nginx creates users www-data and uses it to fetch your website data when it is requested, so give it permissions to the file
+# Give it 755 permission: 7 -> owner has read, write, execute, 5 -> group has read, execute, 5 -> everyone else has read and execute
+- name: Create Website Root directory
+  file:
+    path: "{{ website_root }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: www-data
+
+# sudo rm /etc/nginx/sites-enabled/default
+# nginx creates a default website in sites-available and then creates a symlink to one in sites-enabled
+# We delete the file in sites-enabled since nginx looks in that directory when fetching webstie content
+- name: Remove Nginx default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Restart Nginx
+
+# sudo nano /etc/nginx/sites-available/johnsmith.com
+# No real equivalent but create jinga2 file 
+- name: Create Nginx Site Configuration
+  template:
+    src: nginx_site.conf.j2
+    dest: "/etc/nginx/sites-available/{{ domain_name }}"
+    mode: '0644'
+  notify: Restart Nginx
+
+# sudo ln -s /etc/nginx/sites-available/skychatquan.com /etc/nginx/sites-enabled/skychatquan.com
+# Create symlink and file in sites-enabled so nginx can find website content when it searches for it
+- name: Enable site
+  file:
+    src: "/etc/nginx/sites-available/{{ domain_name }}"
+    dest: "/etc/nginx/sites-enabled/{{ domain_name }}"
+    state: link
+  notify: Restart Nginx
+
+# sudo nginx -t
+# Nginx built in syntax checker for config file
+- name: Test Nginx Configuration
+  command: nginx -t
+  changed_when: false # Does not count as making a change, is read only
+
+# sudo systemctl start nginx
+# sudo systemctl enable nginx
+# sudo systemctl verift nginx
+- name: Starts Nginx and ensure running and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: yes # Start automatically whenever the server reboots

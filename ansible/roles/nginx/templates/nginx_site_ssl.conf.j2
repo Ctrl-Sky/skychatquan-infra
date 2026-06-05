@@ -1,0 +1,41 @@
+# For HTTP
+server {
+    listen 80;
+    listen [::]:80; # For IPv6
+
+    # Which domain names server this block applies to. This becomes the value for $host
+    server_name {{ domain_name }} www.{{ domain_name }}; 
+
+    # Let's Encrypt verifys domain ownership over HTTP
+    # For any requests to /.well-known/acme-challenge/ then serve files from /var/www/certbot
+    # location /.well-known/acme-challenge/ {
+    #     root /var/www/certbot;
+    # }
+
+    # for all other requests, redirect to HTTPS
+    # $request_uri contains full path and query string. If someone visits http://skychatquan.com/about?ref=twitter, then they get redirected to the HTTPS version of it
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+# For HTTPS
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name {{ domain_name }} www.{{ domain_name }};
+    
+    # Base directory nginx looks in
+    # When a visitor requests https://johnsmith.com/about/ Nginx looks for the file at /var/www/johnsmith.com/about/index.html
+    root {{ website_root }}; 
+    index index.html; # 
+
+    # SSL certificate files that are created by certbot
+    # ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+
+    # For all url paths, try finding files $uri and $uri/ return 404 if not found
+    location / { 
+        try_files $uri $uri/ =404;
+    }
+}

@@ -36,11 +36,13 @@
 # sudo chmod 600 /home/deploy/.ssh/authorized_keys
 # sudo chown -R deploy:deploy /home/deploy/.ssh
 # chmod 600 grands read,write, to ownder and removes all from others
-# This adds the public to the deploy user so then we can SSH as the deploy user isntead of as ubuntu. When you run ssh deploy@1.2.3.4 it first looks into /home/deploy/.ssh/authorized_keys and looks at the list of public keys and sees if your private key matches any of them. If it does, you are allowed in. Terraform already added our public key into authroized key for ubuntu user so we are doing that now for this user
+# This adds the public to the deploy user so then we can SSH as the deploy user instead of as ubuntu. When you run ssh deploy@1.2.3.4 it first looks 
+# into /home/deploy/.ssh/authorized_keys and looks at the list of public keys and sees if your private key matches any of them. If it does, you are allowed in. 
+# Terraform already added our public key into authroized key for ubuntu user so we are doing that now for this user
 - name: Add SSH public key for deploy user
   authorized_key:
     user: "{{ deploy_user }}"
-    key: "{{ lookup('file', '~/.ssh/~/.ssh/deploy_key.pub') }}"
+    key: "{{ lookup('file', '~/.ssh/deploy_key.pub') }}"
     state: present
   
 # sudo visudo -f /etc/sudoers.d/deploy
