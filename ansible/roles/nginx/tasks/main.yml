@@ -35,7 +35,6 @@
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
-  notify: Restart Nginx
 
 # sudo nano /etc/nginx/sites-available/johnsmith.com
 # No real equivalent but create jinga2 file 

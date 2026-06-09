@@ -17,10 +17,10 @@
   command: >
     certbot certonly
     --webroot
-    --webroot-path {{ website_root }}
     --agree-tos
     --no-eff-email
     --email skyquan23@gmail.com
+    --w {{ let_encrypt_path }}
     --non-interactive
     -d {{ domain_name }}
     -d www.{{ domain_name }}
@@ -46,5 +46,5 @@
     name: "Certbot renewal"
     minute: "0"
     hour: "0,12"
-    job: "certbot renew --quiet --webroot --webroot-path {{ website_root }}"
+    job: "certbot renew --quiet --webroot --webroot-path {{ let_encrypt_path }}"
     state: present
