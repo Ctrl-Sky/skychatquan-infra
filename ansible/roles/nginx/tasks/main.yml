@@ -44,7 +44,6 @@
     src: nginx_site.conf.j2
     dest: "/etc/nginx/sites-available/{{ domain_name }}"
     mode: '0644'
-  notify: Restart Nginx
 
 # sudo ln -s /etc/nginx/sites-available/skychatquan.com /etc/nginx/sites-enabled/skychatquan.com
 # Create symlink and file in sites-enabled so nginx can find website content when it searches for it
@@ -53,7 +52,6 @@
     src: "/etc/nginx/sites-available/{{ domain_name }}"
     dest: "/etc/nginx/sites-enabled/{{ domain_name }}"
     state: link
-  notify: Restart Nginx
 
 # sudo nginx -t
 # Nginx built in syntax checker for config file
@@ -61,11 +59,8 @@
   command: nginx -t
   changed_when: false # Does not count as making a change, is read only
 
-# sudo systemctl start nginx
-# sudo systemctl enable nginx
-# sudo systemctl verify nginx
+# sudo systemctl reload nginx
 - name: Starts Nginx and ensure running and enabled
   service:
     name: nginx
-    state: started
-    enabled: yes # Start automatically whenever the server reboots
+    state: reloaded

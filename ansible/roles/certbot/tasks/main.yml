@@ -32,7 +32,6 @@
     src: nginx_site_ssl.conf.j2
     dest: "/etc/nginx/sites-available/{{ domain_name }}"
     mode: "0644"
-  notify: Restart Nginx
 
 - name: Check Nginx syntax
   command: sudo nginx -t
