@@ -5,16 +5,17 @@
 server {
     listen 80;
     listen [::]:80; # For IPv6
-
-    # Which domain names server this block applies to. This becomes the value for $host
-    server_name {{ domain_name }} www.{{ domain_name }}; 
+    server_name {{ domain_name }} www.{{ domain_name }};
 
     # Let's Encrypt verifys domain ownership over HTTP
     # For any requests to /.well-known/acme-challenge/ then serve files from /var/www/certbot
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
+    location ^~ /.well-known/acme-challenge/ {
+        default_type "text/plain";
+        root {{ let_encrypt_path }};
     }
 
+    root {{ website_root }};
+    index index.html;
     location / {
         try_files $uri $uri/ =404;
     }

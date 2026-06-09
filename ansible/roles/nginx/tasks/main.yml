@@ -20,6 +20,14 @@
     owner: "{{ deploy_user }}"
     group: www-data
 
+# sudo mkdir -p /var/www/letsencrypt
+# sudo chown deploy:www-data /var/www/letsencrypt
+# sudo chmod 755 /var/www/letsencrypt
+- name: Create Directory for Let's Encrypt HTTP-01 Challenge
+  file:
+    path: "{{ let_encrypt_path }}/.well-known/acme-challenge"
+    state: directory
+
 # sudo rm /etc/nginx/sites-enabled/default
 # nginx creates a default website in sites-available and then creates a symlink to one in sites-enabled
 # We delete the file in sites-enabled since nginx looks in that directory when fetching webstie content
@@ -55,7 +63,7 @@
 
 # sudo systemctl start nginx
 # sudo systemctl enable nginx
-# sudo systemctl verift nginx
+# sudo systemctl verify nginx
 - name: Starts Nginx and ensure running and enabled
   service:
     name: nginx

@@ -1,0 +1,51 @@
+---
+# sudo apt install -y certbot
+- name: Install Certbot and Nginx Plugin
+  apt:
+    name: certbot
+    state: present
+    update_cache: yes
+
+# This is the equivalent of an if else statement to see if "path" exits
+- name: Check if certificate already /etc/nginx/sites-available/johnsmith.com
+  stat:
+    path: "/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
+  register: cert_exists
+
+# This is already running a bash script. --non-interactive and --agree-tos is done to remove user input
+- name: Obtain SSL Certificatie
+  command: >
+    certbot certonly
+    --webroot
+    --webroot-path {{ website_root }}
+    --agree-tos
+    --no-eff-email
+    --email skyquan23@gmail.com
+    --non-interactive
+    -d {{ domain_name }}
+    -d www.{{ domain_name }}
+  when: not cert_exists.stat.exists
+
+# Same steps in nginx/tasks/main.yml, replace nginx.conf with new one that supports HTTPS
+- name: Update nginx to full HTTPS config
+  template:
+    src: nginx_site_ssl.conf.j2
+    dest: "/etc/nginx/sites-available/{{ domain_name }}"
+    mode: "0644"
+  notify: Restart Nginx
+
+- name: Check Nginx syntax
+  command: sudo nginx -t
+
+- name: Reload Nginx with HTTPS config
+  service:
+    name: nginx
+    state: reloaded
+
+- name: Set up automatic certificate renewal
+  cron:
+    name: "Certbot renewal"
+    minute: "0"
+    hour: "0,12"
+    job: "certbot renew --quiet --webroot --webroot-path {{ website_root }}"
+    state: present

@@ -1,3 +1,4 @@
 domain_name: "skychatquan.com"
 deploy_user: deploy
 website_root: /var/www/skychatquan.com
+let_encrypt_path: /var/www/letsencrypt
