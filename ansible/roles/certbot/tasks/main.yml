@@ -20,7 +20,7 @@
     --agree-tos
     --no-eff-email
     --email skyquan23@gmail.com
-    --w {{ let_encrypt_path }}
+    --webroot-path {{ let_encrypt_path }}
     --non-interactive
     -d {{ domain_name }}
     -d www.{{ domain_name }}

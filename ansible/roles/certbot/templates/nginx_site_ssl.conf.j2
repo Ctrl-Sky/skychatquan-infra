@@ -13,7 +13,7 @@ server {
         root {{ let_encrypt_path }};
     }
 
-    # for all other requests, redirect to HTTPS
+    # for all other requests, rediret to HTTPS
     # $request_uri contains full path and query string. If someone visits http://skychatquan.com/about?ref=twitter, then they get redirected to the HTTPS version of it
     location / {
         return 301 https://$host$request_uri;
