@@ -7,7 +7,7 @@
     update_cache: yes
 
 # This is the equivalent of an if else statement to see if "path" exits
-- name: Check if certificate already /etc/nginx/sites-available/johnsmith.com
+- name: Check if certificate already /etc/nginx/sites-available/domain.com
   stat:
     path: "/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
   register: cert_exists
@@ -19,7 +19,7 @@
     --webroot
     --agree-tos
     --no-eff-email
-    --email skyquan23@gmail.com
+    --email {{ email }}
     --webroot-path {{ let_encrypt_path }}
     --non-interactive
     -d {{ domain_name }}

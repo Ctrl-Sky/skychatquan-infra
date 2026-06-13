@@ -1,4 +1,5 @@
 cd terraform
+terraform init
 terraform apply -auto-approve
 public_ip=$(terraform output -raw instance_public_ip)
 

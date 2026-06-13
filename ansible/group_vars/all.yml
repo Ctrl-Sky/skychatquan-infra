@@ -1,4 +1,5 @@
 domain_name: "skychatquan.com"
-deploy_user: deploy
-website_root: /var/www/skychatquan.com
-let_encrypt_path: /var/www/letsencrypt
+deploy_user: deploy # Creates user for GitHub Actions to SSH as
+website_root: /var/www/skychatquan.com # Path to save website content within server
+let_encrypt_path: /var/www/letsencrypt # Path for Let's Encrpt http-01 challenge for ssl cert
+email: skyquan23@gmail.com # Email associated with ssl cert
